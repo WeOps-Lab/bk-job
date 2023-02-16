@@ -46,21 +46,21 @@
   version: 1.0.0
   version_type: ee
 
-- name: job-file-gateway
-  module: job
-  project_dir: job/job-file-gateway
-  alias: job-file-gateway
-  language: java/1.8
-  version: 1.0.0
-  version_type: ee
+#- name: job-file-gateway
+#  module: job
+#  project_dir: job/job-file-gateway
+#  alias: job-file-gateway
+#  language: java/1.8
+#  version: 1.0.0
+#  version_type: ee
 
-- name: job-ticket
-  module: job
-  project_dir: job/job-ticket
-  alias: job-ticket
-  language: java/1.8
-  version: 1.0.0
-  version_type: ee
+#- name: job-ticket
+#  module: job
+#  project_dir: job/job-ticket
+#  alias: job-ticket
+#  language: java/1.8
+#  version: 1.0.0
+#  version_type: ee
 
 - name: job-analysis
   module: job

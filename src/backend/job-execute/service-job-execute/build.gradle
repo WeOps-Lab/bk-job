@@ -23,6 +23,7 @@
  */
 
 apply plugin: 'io.spring.dependency-management'
+
 dependencies {
     api project(':commons:common-web')
     api project(":job-file-gateway:api-job-file-gateway")
@@ -52,11 +53,18 @@ dependencies {
     implementation 'org.apache.commons:commons-pool2'
     implementation 'io.micrometer:micrometer-registry-prometheus'
     implementation "org.hibernate.validator:hibernate-validator"
+
+    implementation 'org.apache.logging.log4j:log4j-api:2.16.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.16.0'
+
     // https://mvnrepository.com/artifact/org.apache.curator/curator-framework
-    api(group: 'org.apache.curator', name: 'curator-framework', version: '5.1.0')
+    api(group: 'org.apache.curator', name: 'curator-framework', version: '5.1.0') {
+        exclude group: 'log4j', module: 'log4j'
+    }
     // https://mvnrepository.com/artifact/org.apache.curator/curator-recipes
     api(group: 'org.apache.curator', name: 'curator-recipes', version: '5.1.0')
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.apache.commons:commons-lang3'
+
 }
