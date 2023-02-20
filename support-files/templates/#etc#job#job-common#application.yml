@@ -50,12 +50,7 @@ job:
     service:
       private-key-base64: __BK_JOB_SECURITY_PRIVATE_KEY_BASE64__
       public-key-base64: __BK_JOB_SECURITY_PUBLIC_KEY_BASE64__
-  {% if job_edition == "ee" -%}
-  edition: ee
-  {% endif -%}
-  {% if job_edition == "ce" -%}
   edition: ce
-  {% endif -%}
   encrypt:
     password: __BK_JOB_ENCRYPT_PASSWORD__
   web:
@@ -114,4 +109,3 @@ cmdb:
 
 swagger:
   url: swagger.job.com
-
