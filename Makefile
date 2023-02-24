@@ -54,3 +54,6 @@ release:
 	cp -Rf ./src/backend/release/upgrader*.jar  $(RELEASE_PATH)/backend/upgrader-3.5.1.jar
 
 	cp -Rf ./docs/ $(RELEASE_PATH)
+
+	cd ./versionLogs && python3 ./genBundledVersionLog.py
+	mv ./versionLogs/bundledVersionLog.* $(RELEASE_PATH)/frontend/static/
