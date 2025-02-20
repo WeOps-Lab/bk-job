@@ -27,7 +27,7 @@ import com.dorongold.gradle.tasktree.TaskTreePlugin
 buildscript {
     ext {
         set('springDependencyManagePluginVersion', "1.0.11.RELEASE")
-        set("springBootVersion", "2.4.6")
+        set("springBootVersion", "2.5.15")
         set("gradleJooqVersion", "3.0.0")
     }
 
@@ -58,19 +58,23 @@ buildscript {
 plugins {
     id "java-library"
     id "io.spring.dependency-management" version '1.0.11.RELEASE' apply false
-    id 'org.springframework.boot' version '2.4.6' apply false
+    id 'org.springframework.boot' version '2.5.15' apply false
     id "idea"
     id 'nu.studer.jooq' version '3.0.0'
 }
 
 ext {
     // https://mvnrepository.com/artifact/org.springframework/spring-jdbc
-    set("springVersion", "5.3.9")
+    // set("springVersion", "5.3.9")
+    set("springVersion", "5.3.39")
+    set("springJdbcVersion", "5.3.39")
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-dependencies
-    set("springBootVersion", "2.4.6")
+    set("springBootVersion", "2.5.15")
     // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies
     set('springCloudVersion', "2020.0.3")
     // https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui
+    set('springSecurityVersion', "5.7.12")
+    set('snakeyamlVersion', "2.4")
     set('swaggerVersion', "2.9.2")
     set('junitVersion', "5.5.2")
     // https://mvnrepository.com/artifact/org.projectlombok/lombok
@@ -79,7 +83,7 @@ ext {
     set('jacksonVersion', "2.11.0")
     set('jaxrsVersion', "2.0")
     // https://mvnrepository.com/artifact/ch.qos.logback/logback-core
-    set('logbackVersion', "1.2.10")
+    set('logbackVersion', "1.2.13")
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     set('slf4jVersion', "1.7.30")
     set('servletVersion', "3.0.1")
@@ -205,8 +209,10 @@ subprojects {
             dependency "org.springframework.boot:spring-boot-starter-quartz:$springBootVersion"
             dependency "org.springframework.boot:spring-boot-starter-data-redis:$springBootVersion"
             dependency "org.springframework.boot:spring-boot-starter-validation:$springBootVersion"
-            dependency "org.springframework:spring-jdbc:$springVersion"
-            dependency "org.springframework:spring-webflux:$springVersion"
+            dependency "org.springframework:spring-core:$springVersion"
+            dependency "org.springframework:spring-jdbc:$springJdbcVersion"
+            dependency "org.springframework:spring-security-core:$springSecurityVersion"
+            //dependency "org.springframework:spring-webflux:$springVersion"
             dependency "org.projectlombok:lombok:$lombokVersion"
             dependency "javax.ws.rs:javax.ws.rs-api:$jaxrsVersion"
             dependency "org.slf4j:slf4j-api:$slf4jVersion"
@@ -214,6 +220,7 @@ subprojects {
             dependency "io.springfox:springfox-swagger-ui:$swaggerVersion"
             dependency "org.apache.commons:commons-collections4:$apacheCommonsCollectionVersion"
             dependency "org.apache.commons:commons-pool2:$apacheCommonsPoolVersion"
+            dependency "org.yaml:snakeyaml:$snakeyamlVersion"
             dependency "net.sf.dozer:dozer:$dozerVersion"
             dependency "commons-collections:commons-collections:$commonsCollectionsVersion"
             dependency "org.jedis:jedis:$jedisVersion"
@@ -265,4 +272,3 @@ subprojects {
     }
 }
 apply plugin: TaskTreePlugin
-
