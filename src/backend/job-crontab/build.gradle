@@ -44,6 +44,8 @@ subprojects {
         implementation 'org.apache.logging.log4j:log4j-to-slf4j:2.17.1'
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         testImplementation 'org.junit.jupiter:junit-jupiter'
+        implementation 'org.apache.tomcat.embed:tomcat-embed-core:9.0.99'
+        implementation 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.99'
     }
 }
 group 'com.tencent.bk.job'

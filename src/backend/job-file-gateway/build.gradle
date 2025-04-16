@@ -40,5 +40,8 @@ subprojects {
         annotationProcessor 'org.projectlombok:lombok'
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         testImplementation 'org.junit.jupiter:junit-jupiter'
+        implementation 'org.apache.tomcat.embed:tomcat-embed-core:9.0.99'
+        implementation 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.99'
+        implementation 'commons-fileupload:commons-fileupload:1.5'
     }
 }
