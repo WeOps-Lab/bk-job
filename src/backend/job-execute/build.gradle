@@ -50,5 +50,7 @@ subprojects {
         implementation 'org.apache.tomcat.embed:tomcat-embed-core:9.0.99'
         implementation 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.99'
         implementation 'org.springframework.cloud:spring-cloud-function-context:3.2.6'
+
+        implementation 'org.springframework.amqp:spring-amqp:2.4.17'
     }
 }
