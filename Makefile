@@ -1,7 +1,7 @@
 RELEASE_PATH=/opt/release/job
 
 ui:
-	cd src/frontend/  && npm install  && npm run build
+	cd src/frontend/  && npm install @babel/runtime@7.12.18 && npm install  && npm run build
 server:
 	cd src/backend/ && gradle clean build -x test
 release:
