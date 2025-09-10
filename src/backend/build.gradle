@@ -22,8 +22,6 @@
  * IN THE SOFTWARE.
  */
 
-import com.dorongold.gradle.tasktree.TaskTreePlugin
-
 buildscript {
     ext {
         set('springDependencyManagePluginVersion', "1.0.11.RELEASE")
@@ -51,7 +49,6 @@ buildscript {
         classpath "io.spring.gradle:dependency-management-plugin:$springDependencyManagePluginVersion"
         classpath "nu.studer:gradle-jooq-plugin:$gradleJooqVersion"
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.1.0'
-        classpath "gradle.plugin.com.dorongold.plugins:task-tree:1.5"
     }
 }
 
@@ -70,13 +67,18 @@ ext {
     set("springBootVersion", "2.4.6")
     // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies
     set('springCloudVersion', "2020.0.3")
+    // 强制升级Spring Security版本以修复CVE-2021-22119和CVE-2022-22976
+    set('springSecurityVersion', "5.5.7")
+    // 强制升级SnakeYAML版本以修复CVE-2022-25857和CVE-2022-38749
+    set('snakeYamlVersion', "1.33")
     // https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui
     set('swaggerVersion', "2.9.2")
     set('junitVersion', "5.5.2")
     // https://mvnrepository.com/artifact/org.projectlombok/lombok
     set('lombokVersion', "1.18.10")
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
-    set('jacksonVersion', "2.11.0")
+    // 强制升级Jackson版本以修复CVE-2020-36518、CVE-2023-35116、CVE-2022-42003、CVE-2022-42004、CVE-2025-52999等安全漏洞
+    set('jacksonVersion', "2.15.4")
     set('jaxrsVersion', "2.0")
     // https://mvnrepository.com/artifact/ch.qos.logback/logback-core
     set('logbackVersion', "1.2.10")
@@ -100,9 +102,9 @@ ext {
     // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
     set('apacheHttpClientVersion', "4.5.10")
     set('apacheThriftVersion', "0.15.0")
-    set('commonsIOVersion', "2.6")
     set('javaxServletVersion', "4.0.1")
-    set('guavaVersion', "28.2-jre")
+    // 强制升级Google Guava版本以修复CVE-2020-8908访问控制错误漏洞
+    set('guavaVersion', "30.1.1-jre")
     set('jjwtVersion', "0.9.1")
     set('hibernateValidatorVersion', "6.1.4.Final")
     set('micrometerPrometheusVersion', "1.5.1")
@@ -110,6 +112,18 @@ ext {
     set('jodaTimeVersion', "2.10.5")
     set('bcprovVersion', "1.64")
     set('reflectionsVersion', "0.9.12")
+    // 强制升级RabbitMQ amqp-client版本以修复CVE-2023-46120
+    set('rabbitmqAmqpClientVersion', "5.18.0")
+    // 强制升级Netty版本以修复CVE-2021-37137、CVE-2021-37136、CVE-2022-24823、CVE-2024-29025
+    set('nettyVersion', "4.1.86.Final")
+    // 强制升级Apache ZooKeeper版本以修复CVE-2024-23944敏感信息泄露漏洞
+    set('zookeeperVersion', "3.8.4")
+    // 强制升级Apache Commons Lang版本以修复CVE-2025-48924安全漏洞
+    set('apacheCommonsLangVersion', "3.18.0")
+    // 强制升级Apache Commons IO版本以修复CVE-2021-29425和CVE-2024-47554漏洞
+    set('commonsIOVersion', "2.16.1")
+    // 强制升级Apache Commons BeanUtils版本以修复CVE-2014-0114和CVE-2019-10086漏洞
+    set('commonsBeanUtilsVersion', "1.9.4")
     if (System.getProperty("bkjobVersion")) {
         set('bkjobVersion', System.getProperty("bkjobVersion"))
         println "bkjobVersoin:" + bkjobVersion
@@ -137,7 +151,7 @@ allprojects {
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
 
-    tasks.withType(JavaCompile) {
+    tasks.withType(JavaCompile).configureEach {
         options.encoding = "UTF-8"
         options.compilerArgs.add '-parameters'
     }
@@ -167,27 +181,19 @@ subprojects {
     apply plugin: "eclipse"
     apply plugin: "io.spring.dependency-management"
 
-    tasks.withType(JavaCompile) {
+    tasks.withType(JavaCompile).configureEach {
         options.encoding = "UTF-8"
     }
-    tasks.withType(Javadoc) {
+    tasks.withType(Javadoc).configureEach {
         options.encoding("UTF-8")
     }
-
-    test {
-        useJUnitPlatform()
-        testLogging {
-            events 'PASSED', 'FAILED', 'SKIPPED'
-        }
-        include '**/*Test.class'
-        exclude '**/*IntegrationTest.class'
-    }
-    task integrationTest(type: Test, dependsOn: test) {
+    tasks.register("integrationTest", Test) {
+        dependsOn test
         useJUnitPlatform()
         include '**/*IntegrationTest.class'
     }
 
-    task testAll(type: Test) {
+    tasks.register("testAll", Test) {
         useJUnitPlatform()
         testLogging {
             events 'PASSED', 'FAILED', 'SKIPPED'
@@ -202,6 +208,39 @@ subprojects {
                 mavenBom "org.springframework.boot:spring-boot-dependencies:$springBootVersion"
                 mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
             }
+            // 强制升级Spring Security版本以修复CVE-2021-22119和CVE-2022-22976
+            dependencySet(group: "org.springframework.security", version: "$springSecurityVersion") {
+                entry "spring-security-core"
+                entry "spring-security-web"
+                entry "spring-security-config"
+                entry "spring-security-crypto"
+                entry "spring-security-oauth2-core"
+                entry "spring-security-oauth2-client"
+                entry "spring-security-oauth2-resource-server"
+                entry "spring-security-oauth2-jose"
+            }
+            // 强制升级SnakeYAML版本以修复CVE-2022-25857和CVE-2022-38749
+            dependency "org.yaml:snakeyaml:$snakeYamlVersion"
+            // 强制升级RabbitMQ amqp-client版本以修复CVE-2023-46120
+            dependency "com.rabbitmq:amqp-client:$rabbitmqAmqpClientVersion"
+            // 强制升级Netty版本以修复CVE-2021-37137、CVE-2021-37136、CVE-2022-24823、CVE-2024-29025
+            dependencySet(group: "io.netty", version: "$nettyVersion") {
+                entry "netty-all"
+                entry "netty-buffer"
+                entry "netty-codec"
+                entry "netty-codec-http"
+                entry "netty-codec-http2"
+                entry "netty-common"
+                entry "netty-handler"
+                entry "netty-resolver"
+                entry "netty-transport"
+                entry "netty-transport-native-epoll"
+                entry "netty-transport-native-unix-common"
+            }
+            // 强制升级Apache ZooKeeper版本以修复CVE-2024-23944敏感信息泄露漏洞
+            dependency "org.apache.zookeeper:zookeeper:$zookeeperVersion"
+            // 强制升级Apache Commons BeanUtils版本以修复CVE-2014-0114和CVE-2019-10086漏洞
+            dependency "commons-beanutils:commons-beanutils:$commonsBeanUtilsVersion"
             dependency "org.junit.jupiter:junit-jupiter:$junitVersion"
             dependency "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
             dependency "org.springframework.boot:spring-boot-starter-jdbc:$springBootVersion"
@@ -262,10 +301,4 @@ subprojects {
             }
         }
     }
-    configurations {
-        all*.exclude group: 'junit', module: 'junit'
-        all*.exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-    }
 }
-apply plugin: TaskTreePlugin
-

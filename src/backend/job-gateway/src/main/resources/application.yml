@@ -12,6 +12,11 @@ spring:
     ssl:
       useInsecureTrustManager: true
     gateway:
+      # 安全配置：修复Spring Cloud Gateway CVE-2025-41235漏洞
+      forwarded:
+        enabled: false
+      x-forwarded:
+        enabled: false
       discovery:
         locator:
           enabled: false
