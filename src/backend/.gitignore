@@ -9,3 +9,5 @@ release
 
 .codecc
 build.yml
+# 本地配置文件（包含敏感信息）
+gradle-local.properties

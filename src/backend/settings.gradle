@@ -22,6 +22,18 @@
  * IN THE SOFTWARE.
  */
 
+// 加载本地配置覆盖（如果存在），用于本地开发环境敏感信息配置
+def localPropertiesFile = file('gradle-local.properties')
+if (localPropertiesFile.exists()) {
+    def localProperties = new Properties()
+    localPropertiesFile.withInputStream { localProperties.load(it) }
+    localProperties.each { key, value ->
+        settings.ext.set(key, value)
+        gradle.ext.set(key, value)
+    }
+    println "Loaded local properties from gradle-local.properties"
+}
+
 rootProject.name = 'bk-job-backend'
 include 'commons'
 include 'commons:artifactory-sdk'

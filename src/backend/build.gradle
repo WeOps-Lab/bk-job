@@ -81,7 +81,8 @@ ext {
     set('jacksonVersion', "2.15.4")
     set('jaxrsVersion', "2.0")
     // https://mvnrepository.com/artifact/ch.qos.logback/logback-core
-    set('logbackVersion', "1.2.10")
+    // 强制升级Logback版本以修复CVE-2023-6378、CVE-2023-6481拒绝服务漏洞
+    set('logbackVersion', "1.2.13")
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     set('slf4jVersion', "1.7.30")
     set('servletVersion', "3.0.1")
@@ -103,8 +104,8 @@ ext {
     set('apacheHttpClientVersion', "4.5.10")
     set('apacheThriftVersion', "0.15.0")
     set('javaxServletVersion', "4.0.1")
-    // 强制升级Google Guava版本以修复CVE-2020-8908访问控制错误漏洞
-    set('guavaVersion', "30.1.1-jre")
+    // 强制升级Google Guava版本以修复CVE-2020-8908访问控制错误漏洞和CVE-2023-2976临时文件漏洞
+    set('guavaVersion', "32.0.1-jre")
     set('jjwtVersion', "0.9.1")
     set('hibernateValidatorVersion', "6.1.4.Final")
     set('micrometerPrometheusVersion', "1.5.1")
@@ -114,16 +115,17 @@ ext {
     set('reflectionsVersion', "0.9.12")
     // 强制升级RabbitMQ amqp-client版本以修复CVE-2023-46120
     set('rabbitmqAmqpClientVersion', "5.18.0")
-    // 强制升级Netty版本以修复CVE-2021-37137、CVE-2021-37136、CVE-2022-24823、CVE-2024-29025
-    set('nettyVersion', "4.1.86.Final")
+    // 强制升级Netty版本以修复CVE-2021-37137、CVE-2021-37136、CVE-2022-24823、CVE-2024-29025、CVE-2025-55163
+    // 注意：4.1.125.Final存在60%性能回退问题(GitHub issue #15852)，使用4.1.124.Final
+    set('nettyVersion', "4.1.124.Final")
     // 强制升级Apache ZooKeeper版本以修复CVE-2024-23944敏感信息泄露漏洞
     set('zookeeperVersion', "3.8.4")
     // 强制升级Apache Commons Lang版本以修复CVE-2025-48924安全漏洞
     set('apacheCommonsLangVersion', "3.18.0")
     // 强制升级Apache Commons IO版本以修复CVE-2021-29425和CVE-2024-47554漏洞
     set('commonsIOVersion', "2.16.1")
-    // 强制升级Apache Commons BeanUtils版本以修复CVE-2014-0114和CVE-2019-10086漏洞
-    set('commonsBeanUtilsVersion', "1.9.4")
+    // 强制升级Apache Commons BeanUtils版本以修复CVE-2014-0114、CVE-2019-10086和CVE-2025-48734漏洞
+    set('commonsBeanUtilsVersion', "1.11.0")
     if (System.getProperty("bkjobVersion")) {
         set('bkjobVersion', System.getProperty("bkjobVersion"))
         println "bkjobVersoin:" + bkjobVersion
