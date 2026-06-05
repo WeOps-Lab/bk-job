@@ -47,8 +47,8 @@ subprojects {
         implementation 'org.apache.zookeeper:zookeeper:3.7.2'
         implementation 'org.apache.zookeeper:zookeeper-jute:3.7.2'
 
-        implementation 'org.apache.tomcat.embed:tomcat-embed-core:9.0.99'
-        implementation 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.99'
+        implementation "org.apache.tomcat.embed:tomcat-embed-core:$tomcatVersion"
+        implementation "org.apache.tomcat.embed:tomcat-embed-websocket:$tomcatVersion"
         implementation 'org.springframework.cloud:spring-cloud-function-context:3.2.6'
 
         implementation 'org.springframework.amqp:spring-amqp:2.4.17'
