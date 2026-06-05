@@ -63,7 +63,9 @@ plugins {
 ext {
     // https://mvnrepository.com/artifact/org.springframework/spring-jdbc
     // 强制升级Spring Framework版本以修复CVE-2023-20860和CVE-2024-22243安全漏洞
+    // spring-framework.version 属性会覆盖 Spring Boot BOM 中所有 Spring Framework 模块的版本
     set("springVersion", "5.3.32")
+    set("spring-framework.version", "5.3.32")
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-dependencies
     set("springBootVersion", "2.4.6")
     // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies
