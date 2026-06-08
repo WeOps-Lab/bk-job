@@ -126,6 +126,11 @@ ext {
     // 使用Spring Boot 2.7.18配套版本1.0.39，与Spring Framework 5.3.x完全兼容
     set('reactorNettyVersion', "1.0.39")
     set('reactor-netty.version', "1.0.39")
+    // 强制升级reactor-core版本以配合reactor-netty 1.0.39
+    // reactor-core 3.4.6（Spring Boot 2.4.6默认）缺少MonoSink.contextView()方法
+    // 该方法由reactor-netty 1.0.39调用，需升级至3.4.34+（Reactor BOM 2020.0.34+）
+    set('reactorCoreVersion', "3.4.34")
+    set('reactor-core.version', "3.4.34")
     // 强制升级Apache ZooKeeper版本以修复CVE-2024-23944敏感信息泄露漏洞
     set('zookeeperVersion', "3.8.4")
     // 强制升级Apache Commons Lang版本以修复CVE-2025-48924安全漏洞
@@ -247,6 +252,12 @@ subprojects {
                 entry "reactor-netty-tcp"
                 entry "reactor-netty-udp"
             }
+            // 强制升级reactor-core以配合reactor-netty 1.0.39
+            // MonoSink.contextView()在3.4.6中不存在，3.4.34+才有
+            dependencySet(group: "io.projectreactor", version: "$reactorCoreVersion") {
+                entry "reactor-core"
+                entry "reactor-test"
+            }
             // 强制升级Netty版本以修复CVE-2021-37137、CVE-2021-37136、CVE-2022-24823、CVE-2024-29025
             dependencySet(group: "io.netty", version: "$nettyVersion") {
                 entry "netty-all"
@@ -341,6 +352,8 @@ subprojects {
             force "io.projectreactor.netty:reactor-netty-http:${reactorNettyVersion}"
             force "io.projectreactor.netty:reactor-netty-tcp:${reactorNettyVersion}"
             force "io.projectreactor.netty:reactor-netty-udp:${reactorNettyVersion}"
+            force "io.projectreactor:reactor-core:${reactorCoreVersion}"
+            force "io.projectreactor:reactor-test:${reactorCoreVersion}"
         }
     }
 }
