@@ -241,6 +241,12 @@ subprojects {
                 entry "reactor-netty-core"
                 entry "reactor-netty-http"
             }
+            // reactor-netty-tcp / reactor-netty-udp 也需强制覆盖，否则
+            // spring-cloud-starter-gateway 可能通过这两个传递引入旧版本
+            dependencySet(group: "io.projectreactor.netty", version: "$reactorNettyVersion") {
+                entry "reactor-netty-tcp"
+                entry "reactor-netty-udp"
+            }
             // 强制升级Netty版本以修复CVE-2021-37137、CVE-2021-37136、CVE-2022-24823、CVE-2024-29025
             dependencySet(group: "io.netty", version: "$nettyVersion") {
                 entry "netty-all"
@@ -323,6 +329,18 @@ subprojects {
             dependencySet(group: 'org.hibernate.validator', version: "$hibernateValidatorVersion") {
                 entry "hibernate-validator"
             }
+        }
+    }
+
+    // 使用 resolutionStrategy.force 强制覆盖所有配置中的 reactor-netty 版本
+    // dependencySet 只设置 managed version，force 才能保证传递依赖解析时不回退旧版
+    configurations.all {
+        resolutionStrategy {
+            force "io.projectreactor.netty:reactor-netty:${reactorNettyVersion}"
+            force "io.projectreactor.netty:reactor-netty-core:${reactorNettyVersion}"
+            force "io.projectreactor.netty:reactor-netty-http:${reactorNettyVersion}"
+            force "io.projectreactor.netty:reactor-netty-tcp:${reactorNettyVersion}"
+            force "io.projectreactor.netty:reactor-netty-udp:${reactorNettyVersion}"
         }
     }
 }
