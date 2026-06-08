@@ -121,6 +121,11 @@ ext {
     // 强制升级Netty版本以修复CVE-2021-37137、CVE-2021-37136、CVE-2022-24823、CVE-2024-29025、CVE-2025-55163
     // 注意：4.1.125.Final存在60%性能回退问题(GitHub issue #15852)，使用4.1.124.Final
     set('nettyVersion', "4.1.124.Final")
+    // 强制升级reactor-netty版本以配合Spring Framework 5.3.32
+    // Spring Boot 2.4.6默认1.0.7，但5.3.32中ReactorServerHttpRequest调用了hostPort()（1.0.19才引入）
+    // 使用Spring Boot 2.7.18配套版本1.0.39，与Spring Framework 5.3.x完全兼容
+    set('reactorNettyVersion', "1.0.39")
+    set('reactor-netty.version', "1.0.39")
     // 强制升级Apache ZooKeeper版本以修复CVE-2024-23944敏感信息泄露漏洞
     set('zookeeperVersion', "3.8.4")
     // 强制升级Apache Commons Lang版本以修复CVE-2025-48924安全漏洞
@@ -230,6 +235,12 @@ subprojects {
             dependency "org.yaml:snakeyaml:$snakeYamlVersion"
             // 强制升级RabbitMQ amqp-client版本以修复CVE-2023-46120
             dependency "com.rabbitmq:amqp-client:$rabbitmqAmqpClientVersion"
+            // 强制升级reactor-netty版本以配合Spring Framework 5.3.32（hostPort()方法1.0.19引入）
+            dependencySet(group: "io.projectreactor.netty", version: "$reactorNettyVersion") {
+                entry "reactor-netty"
+                entry "reactor-netty-core"
+                entry "reactor-netty-http"
+            }
             // 强制升级Netty版本以修复CVE-2021-37137、CVE-2021-37136、CVE-2022-24823、CVE-2024-29025
             dependencySet(group: "io.netty", version: "$nettyVersion") {
                 entry "netty-all"
