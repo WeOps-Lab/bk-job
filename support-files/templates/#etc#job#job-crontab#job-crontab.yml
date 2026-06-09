@@ -51,7 +51,7 @@ spring:
       waitfor-tasks-tocomplete-onshutdown: true
       await-termination-seconds: 900
     scheduler:
-      config-location: classpath:quartz.properties
+      config-location: file:/data/bkce/etc/job/job-crontab/quartz.properties
       scheduler-name: quartz-scheduler
       application-context-scheduler-contextkey: applicationContext
       overwrite-existing-jobs: true
