@@ -118,9 +118,11 @@ ext {
     set('reflectionsVersion', "0.9.12")
     // 强制升级RabbitMQ amqp-client版本以修复CVE-2023-46120
     set('rabbitmqAmqpClientVersion', "5.18.0")
-    // 强制升级Netty版本以修复CVE-2021-37137、CVE-2021-37136、CVE-2022-24823、CVE-2024-29025、CVE-2025-55163
-    // 注意：4.1.125.Final存在60%性能回退问题(GitHub issue #15852)，使用4.1.124.Final
-    set('nettyVersion', "4.1.124.Final")
+    // 强制升级Netty版本以修复CVE-2021-37137、CVE-2021-37136、CVE-2022-24823、CVE-2024-29025、
+    // CVE-2025-55163、CVE-2026-42578、CVE-2026-42579、CVE-2026-45674、CVE-2026-47691
+    set('nettyVersion', "4.1.135.Final")
+    // 单独升级OpenFeign核心模块，避免升级整个Spring Cloud BOM影响其他组件
+    set('springCloudOpenFeignVersion', "3.0.5")
     // 强制升级reactor-netty版本以配合Spring Framework 5.3.32
     // Spring Boot 2.4.6默认1.0.7，但5.3.32中ReactorServerHttpRequest调用了hostPort()（1.0.19才引入）
     // 使用Spring Boot 2.7.18配套版本1.0.39，与Spring Framework 5.3.x完全兼容
@@ -258,20 +260,27 @@ subprojects {
                 entry "reactor-core"
                 entry "reactor-test"
             }
-            // 强制升级Netty版本以修复CVE-2021-37137、CVE-2021-37136、CVE-2022-24823、CVE-2024-29025
+            // 强制统一Netty模块版本，避免未受管模块回退到Spring Boot BOM中的旧版本
             dependencySet(group: "io.netty", version: "$nettyVersion") {
                 entry "netty-all"
                 entry "netty-buffer"
                 entry "netty-codec"
+                entry "netty-codec-dns"
                 entry "netty-codec-http"
                 entry "netty-codec-http2"
+                entry "netty-codec-socks"
                 entry "netty-common"
                 entry "netty-handler"
+                entry "netty-handler-proxy"
                 entry "netty-resolver"
+                entry "netty-resolver-dns"
+                entry "netty-resolver-dns-native-macos"
                 entry "netty-transport"
                 entry "netty-transport-native-epoll"
                 entry "netty-transport-native-unix-common"
             }
+            // CVE-2021-22044仅影响OpenFeign核心模块，定向升级以减少变更范围
+            dependency "org.springframework.cloud:spring-cloud-openfeign-core:$springCloudOpenFeignVersion"
             // 强制升级Apache ZooKeeper版本以修复CVE-2024-23944敏感信息泄露漏洞
             dependency "org.apache.zookeeper:zookeeper:$zookeeperVersion"
             // 强制升级Apache Commons BeanUtils版本以修复CVE-2014-0114和CVE-2019-10086漏洞
