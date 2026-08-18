@@ -74,7 +74,8 @@ CVE-2025-24970 的扫描路径位于 Elasticsearch 和 ZooKeeper 自身的安装
 1. 将统一 Netty 版本由 `4.1.124.Final` 升级至 `4.1.135.Final`。
 2. 增加 `springCloudOpenFeignVersion = 3.0.5`，仅覆盖 OpenFeign 核心模块。
 3. 将 DNS、SOCKS、Proxy 和 Resolver 相关 Netty 模块加入统一版本管理。
-4. 未修改业务代码、接口、数据库结构、配置格式和服务启动方式。
+4. 将被 Feign 客户端继承的共享 API 接口类级路径下移到方法映射，以兼容 OpenFeign 3.0.5 的安全约束。
+5. 未修改业务实现、数据库结构、配置格式和服务启动方式。
 
 变更统计：
 
@@ -135,7 +136,23 @@ BUILD SUCCESSFUL in 1m 31s
 - 所有最终发布 JAR 均未检出表中涉及的 Netty `4.1.65.Final` 漏洞模块。
 - `git diff --check` 通过，未发现空白符错误。
 
-### 6.4 服务影响
+### 6.4 OpenFeign 3.0.5 兼容性验证
+
+OpenFeign 3.0.5 为修复 CVE-2021-22044，禁止 `@FeignClient` 接口及其继承接口使用类级 `@RequestMapping`。项目原有共享 API 接口采用类级路径前缀，升级后会在 Feign Bean 创建阶段抛出以下异常：
+
+```text
+@RequestMapping annotation not allowed on @FeignClient interfaces
+```
+
+兼容修复仅将 29 个被 Feign 客户端继承的共享接口类级路径前缀下移到对应方法映射。验证结果如下：
+
+- 共核对 205 个方法，调整前后的最终 HTTP 路径逐项一致。
+- 使用 OpenFeign 3.0.5 的 `SpringMvcContract` 对最终发布包中的 49 个 Feign 客户端进行解析。
+- 类级 `@RequestMapping` 禁用异常数量为 0。
+- job-manage 中截图涉及的 3 个 Feign 客户端、11 个方法全部解析成功。
+- 使用 MySQL 5.7 重新执行完整编译和打包，构建成功。
+
+### 6.5 服务影响
 
 本次验证没有启动、停止或重启任何现有 bk-job 服务，也没有连接或修改现有业务数据库。所有数据库操作均发生在本地临时 MySQL 5.7 容器中。
 
